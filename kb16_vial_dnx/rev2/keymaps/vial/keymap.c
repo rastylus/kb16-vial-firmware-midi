@@ -40,10 +40,16 @@ enum custom_keycodes {
     ENC2_CW,
     ENC3_CCW,
     ENC3_CW,
+    ENC1_BTN,
+    ENC2_BTN,
+    ENC3_BTN,
 };
 
 // Send MIDI CC helper: channel 0, send single value
 static inline void send_encoder_cc(uint8_t cc, uint8_t val);
+// Encoder button toggle states
+static bool enc1_btn_state = false;
+static bool enc3_btn_state = false;
 #ifdef MIDI_ENABLE
 extern MidiDevice midi_device;
 static inline void send_encoder_cc(uint8_t cc, uint8_t val) {
@@ -80,9 +86,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 */
     /*  Row:    0         1        2        3         4      */
     [_BASE] = LAYOUT(
-                KC_1,     KC_2,    KC_3,    KC_4,     KC_MPLY,
+                KC_1,     KC_2,    KC_3,    KC_4,     ENC1_BTN,
                 KC_5,     KC_6,    KC_7,    KC_8,     TO(_FN),
-                KC_9,     KC_0,    KC_UP,   KC_ENT,   KC_MUTE,
+                KC_9,     KC_0,    KC_UP,   KC_ENT,   ENC3_BTN,
                 MO(_FN2), KC_LEFT, KC_DOWN, KC_RIGHT
             ),
 
@@ -145,20 +151,51 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    if (!record->event.pressed) {
-        return true;
+    switch (keycode) {
+        // Encoder rotation: only on press
+        case ENC1_CCW:
+        case ENC1_CW:
+        case ENC2_CCW:
+        case ENC2_CW:
+        case ENC3_CCW:
+        case ENC3_CW:
+            if (!record->event.pressed) return true;
+            break;
+        
+        // Encoder buttons: handle both press and release
+        case ENC1_BTN:
+        case ENC2_BTN:
+        case ENC3_BTN:
+            break;
+        
+        default:
+            return true;
     }
 
     switch (keycode) {
-        // Encoder 1 (left) CC16: CW +1, CCW -1 (symmetric)
+        // Encoder 1 (top left) CC16: CW +1, CCW -1 (symmetric)
         case ENC1_CCW: send_encoder_cc(16, 127); return false;
         case ENC1_CW:  send_encoder_cc(16, 1);   return false;
-        // Encoder 2 (middle) CC18: CW +1, CCW gentle step (65) to avoid snapping
-        case ENC2_CCW: send_encoder_cc(18, 65);  return false;
-        case ENC2_CW:  send_encoder_cc(18, 1);   return false;
-        // Encoder 3 (right) CC17: CW +1, CCW -1 (symmetric)
-        case ENC3_CCW: send_encoder_cc(17, 127); return false;
-        case ENC3_CW:  send_encoder_cc(17, 1);   return false;
+        // Encoder 2 (top right) CC17: CW +1, CCW -1 (symmetric)
+        case ENC2_CCW: send_encoder_cc(17, 127); return false;
+        case ENC2_CW:  send_encoder_cc(17, 1);   return false;
+        // Encoder 3 (large center) CC18: CW +1, CCW gentle step (65) to avoid snapping
+        case ENC3_CCW: send_encoder_cc(18, 65);  return false;
+        case ENC3_CW:  send_encoder_cc(18, 1);   return false;
+        
+        // Encoder button presses: toggle state on press only
+        case ENC1_BTN:
+            if (record->event.pressed) {
+                enc1_btn_state = !enc1_btn_state;
+                send_encoder_cc(19, enc1_btn_state ? 127 : 0);
+            }
+            return false;
+        case ENC3_BTN:
+            if (record->event.pressed) {
+                enc3_btn_state = !enc3_btn_state;
+                send_encoder_cc(21, enc3_btn_state ? 127 : 0);
+            }
+            return false;
     }
 
     return true;
