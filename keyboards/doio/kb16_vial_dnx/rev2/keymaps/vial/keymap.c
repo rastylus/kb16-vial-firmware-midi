@@ -282,7 +282,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             } else {
                 uint8_t current_layer = get_highest_layer(layer_state);
                 uint8_t cc = 16 + (current_layer * 32);  // CC offset per layer
-                send_encoder_cc(cc, 127);
+                send_encoder_cc(cc, 65);
             }
             return false;
         case ENC1_CW:
@@ -313,7 +313,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             } else {
                 uint8_t current_layer = get_highest_layer(layer_state);
                 uint8_t cc = 17 + (current_layer * 32);
-                send_encoder_cc(cc, 127);
+                send_encoder_cc(cc, 65);
             }
             return false;
         case ENC2_CW:
