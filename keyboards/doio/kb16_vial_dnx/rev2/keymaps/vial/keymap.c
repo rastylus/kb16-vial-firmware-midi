@@ -76,9 +76,7 @@ static inline void send_encoder_cc(uint8_t cc, uint8_t val);
 // Encoder button toggle states
 static bool enc1_btn_state = false;
 static bool enc3_btn_state = false;
-// Bottom row toggle states (positions 12-15)
-static bool grd_cc12_state = false;
-static bool grd_cc13_state = false;
+// Bottom row toggle states (positions 14-15 only)
 static bool grd_cc14_state = false;
 static bool grd_cc15_state = false;
 // Layer navigation modifier state
@@ -245,7 +243,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case LAY_MOD:
             lay_mod_pressed = record->event.pressed;
             return false;
-        
+
         // Encoder rotation: only on press
         case ENC1_CCW:
         case ENC1_CW:
@@ -255,17 +253,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case ENC3_CW:
             if (!record->event.pressed) return true;
             break;
-        
+
         // Encoder buttons: handle both press and release
         case ENC1_BTN:
         case ENC2_BTN:
         case ENC3_BTN:
             break;
-        
+
         // Grid keys: handle both press and release
         case GRD_CC0 ... GRD_CC15:
             break;
-        
+
         default:
             return true;
     }
@@ -273,7 +271,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         // Encoder 1 (top left) - layer-aware CC
         // OR layer navigation 0-5 if LAY_MOD is held
-        case ENC1_CCW: 
+        case ENC1_CCW:
             if (lay_mod_pressed) {
                 uint8_t current_layer = get_highest_layer(layer_state);
                 if (current_layer <= 5) {
@@ -287,7 +285,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 send_encoder_cc(cc, 127);
             }
             return false;
-        case ENC1_CW:  
+        case ENC1_CW:
             if (lay_mod_pressed) {
                 uint8_t current_layer = get_highest_layer(layer_state);
                 if (current_layer <= 5) {
@@ -301,10 +299,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 send_encoder_cc(cc, 1);
             }
             return false;
-        
+
         // Encoder 2 (top right) - layer-aware CC
         // OR layer navigation 6-11 if LAY_MOD is held
-        case ENC2_CCW: 
+        case ENC2_CCW:
             if (lay_mod_pressed) {
                 uint8_t current_layer = get_highest_layer(layer_state);
                 if (current_layer >= 6 && current_layer <= 11) {
@@ -318,7 +316,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 send_encoder_cc(cc, 127);
             }
             return false;
-        case ENC2_CW:  
+        case ENC2_CW:
             if (lay_mod_pressed) {
                 uint8_t current_layer = get_highest_layer(layer_state);
                 if (current_layer >= 6 && current_layer <= 11) {
@@ -332,23 +330,23 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 send_encoder_cc(cc, 1);
             }
             return false;
-        
+
         // Encoder 3 (large center) - layer-aware CC
-        case ENC3_CCW: 
+        case ENC3_CCW:
             {
                 uint8_t current_layer = get_highest_layer(layer_state);
                 uint8_t cc = 18 + (current_layer * 32);
                 send_encoder_cc(cc, 65);
             }
             return false;
-        case ENC3_CW:  
+        case ENC3_CW:
             {
                 uint8_t current_layer = get_highest_layer(layer_state);
                 uint8_t cc = 18 + (current_layer * 32);
                 send_encoder_cc(cc, 1);
             }
             return false;
-        
+
         // Encoder button presses: toggle state on press only (layer-aware CC)
         case ENC1_BTN:
             if (record->event.pressed) {
@@ -377,23 +375,27 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 send_encoder_cc(cc, enc3_btn_state ? 127 : 0);
             }
             return false;
-        
+
         // Grid keys: simple sequential CC (0-15) with layer offset
         case GRD_CC0 ... GRD_CC15:
             {
                 uint8_t base_cc = keycode - GRD_CC0;  // 0-15
                 uint8_t current_layer = get_highest_layer(layer_state);
                 uint8_t cc = base_cc + (current_layer * 16);  // Layer 0: 0-15, Layer 1: 16-31, etc.
-                
-                // Bottom row (12-15) uses toggle behavior
+
+                // Bottom row (12-15): positions 12-13 momentary, 14-15 toggle
                 if (base_cc >= 12 && base_cc <= 15) {
-                    if (record->event.pressed) {
-                        // Toggle the state on press only
-                        switch(base_cc) {
-                            case 12: grd_cc12_state = !grd_cc12_state; send_encoder_cc(cc, grd_cc12_state ? 127 : 0); break;
-                            case 13: grd_cc13_state = !grd_cc13_state; send_encoder_cc(cc, grd_cc13_state ? 127 : 0); break;
-                            case 14: grd_cc14_state = !grd_cc14_state; send_encoder_cc(cc, grd_cc14_state ? 127 : 0); break;
-                            case 15: grd_cc15_state = !grd_cc15_state; send_encoder_cc(cc, grd_cc15_state ? 127 : 0); break;
+                    if (base_cc <= 13) {
+                        // CC12-CC13: momentary behavior
+                        uint8_t val = record->event.pressed ? 127 : 0;
+                        send_encoder_cc(cc, val);
+                    } else {
+                        // CC14-CC15: toggle behavior
+                        if (record->event.pressed) {
+                            switch(base_cc) {
+                                case 14: grd_cc14_state = !grd_cc14_state; send_encoder_cc(cc, grd_cc14_state ? 127 : 0); break;
+                                case 15: grd_cc15_state = !grd_cc15_state; send_encoder_cc(cc, grd_cc15_state ? 127 : 0); break;
+                            }
                         }
                     }
                 } else {

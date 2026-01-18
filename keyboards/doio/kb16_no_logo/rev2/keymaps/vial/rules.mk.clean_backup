@@ -1,0 +1,28 @@
+VIA_ENABLE = yes
+VIAL_ENABLE = yes
+LTO_ENABLE = yes
+
+# Disable parent sources
+SRC = 
+
+# Encoder disabled
+ENCODER_ENABLE = no
+
+# Disable OLED and RGB
+OLED_ENABLE = no
+RGB_MATRIX_ENABLE = no
+
+# Minimal features
+COMMAND_ENABLE = no
+DYNAMIC_MACRO_ENABLE = no
+MOUSEKEY_ENABLE = no
+COMBO_ENABLE = no
+SEND_STRING_ENABLE = no
+TAP_DANCE_ENABLE = no
+VIALRGB_ENABLE = no
+KEY_OVERRIDE_ENABLE = no
+
+QMK_SETTINGS = yes
+
+EEPROM_DRIVER = vendor
+

@@ -32,7 +32,7 @@
 #define DIODE_DIRECTION COL2ROW
 
 /* Set 0 if debouncing isn't needed */
-#define DEBOUNCE 1
+#define DEBOUNCE 5
 
 /* Forcing to use NKRO instead 6KRO */
 #define FORCE_NKRO
@@ -50,6 +50,10 @@
 /* OLED Settings */
 #define OLED_TIMEOUT 60000 // number of milliseconds to wait until OLED automatically turns off
 
+/* Encoder pins */
+#define ENCODERS_PAD_A { B5, A1, A3 }
+#define ENCODERS_PAD_B { B6, A2, A4 }
+
 /* EEPROM Driver Configuration */
 #define WEAR_LEVELING_LOGICAL_SIZE 10240
 #define WEAR_LEVELING_BACKING_SIZE 20480
@@ -63,7 +67,7 @@
 	#define RGB_DISABLE_WHEN_USB_SUSPENDED
 	#define RGB_MATRIX_FRAMEBUFFER_EFFECTS
 	#define RGB_MATRIX_KEYPRESSES
-	#define RGB_MATRIX_TIMEOUT 60000 // number of milliseconds to wait until rgb automatically turns off
+	#define RGB_MATRIX_TIMEOUT 60000 // number of milliseconds to wait until rgb automatically turns off	
 
 /* RGB Matrix effect */
 // RGB Matrix Animation modes. Explicitly enabled

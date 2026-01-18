@@ -14,13 +14,6 @@
     "ws2812": {
         "pin": "A10"
     },
-    "encoder": {
-        "rotary": [
-            {"pin_a": "B5", "pin_b": "B6"},
-            {"pin_a": "A1", "pin_b": "A2"},
-            {"pin_a": "A3", "pin_b": "A4"}
-        ]
-    },
     "processor": "STM32F103",
     "bootloader": "stm32duino",
     "layouts": {
