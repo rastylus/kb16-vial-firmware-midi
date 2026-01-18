@@ -1,0 +1,27 @@
+VIA_ENABLE = yes
+VIAL_ENABLE = yes
+LTO_ENABLE = yes
+MIDI_ENABLE = yes
+
+# Encoder enabled
+ENCODER_ENABLE = yes
+ENCODER_MAP_ENABLE = yes
+
+# Disable RGB to avoid VialRGB protocol
+RGB_MATRIX_ENABLE = no
+
+COMMAND_ENABLE = no
+DYNAMIC_MACRO_ENABLE = yes
+MOUSEKEY_ENABLE = yes
+COMBO_ENABLE = no
+SEND_STRING_ENABLE = no
+TAP_DANCE_ENABLE = no
+VIALRGB_ENABLE = no
+KEY_OVERRIDE_ENABLE = no
+
+QMK_SETTINGS = yes
+
+# eeprom setting
+
+EEPROM_DRIVER = vendor
+
