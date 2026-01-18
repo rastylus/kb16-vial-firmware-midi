@@ -76,6 +76,10 @@ static inline void send_encoder_cc(uint8_t cc, uint8_t val);
 // Encoder button toggle states
 static bool enc1_btn_state = false;
 static bool enc3_btn_state = false;
+// Encoder button press states (for speed modifier)
+static bool enc1_btn_pressed = false;
+static bool enc2_btn_pressed = false;
+static bool enc3_btn_pressed = false;
 // Bottom row toggle states (positions 14-15 only)
 static bool grd_cc14_state = false;
 static bool grd_cc15_state = false;
@@ -282,7 +286,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             } else {
                 uint8_t current_layer = get_highest_layer(layer_state);
                 uint8_t cc = 16 + (current_layer * 32);  // CC offset per layer
-                send_encoder_cc(cc, 65);
+                uint8_t val = (current_layer == 0) ? 65 : 1;
+                if (current_layer != 0) {
+                    for (uint8_t i = 0; i < 3; i++) {
+                        send_encoder_cc(cc, val);
+                    }
+                } else {
+                    send_encoder_cc(cc, val);
+                }
             }
             return false;
         case ENC1_CW:
@@ -296,7 +307,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             } else {
                 uint8_t current_layer = get_highest_layer(layer_state);
                 uint8_t cc = 16 + (current_layer * 32);
-                send_encoder_cc(cc, 1);
+                uint8_t val = (current_layer == 0) ? 1 : 65;
+                if (current_layer != 0) {
+                    for (uint8_t i = 0; i < 3; i++) {
+                        send_encoder_cc(cc, val);
+                    }
+                } else {
+                    send_encoder_cc(cc, val);
+                }
             }
             return false;
 
@@ -313,7 +331,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             } else {
                 uint8_t current_layer = get_highest_layer(layer_state);
                 uint8_t cc = 17 + (current_layer * 32);
-                send_encoder_cc(cc, 65);
+                uint8_t val = (current_layer == 0) ? 65 : 1;
+                if (current_layer != 0) {
+                    for (uint8_t i = 0; i < 3; i++) {
+                        send_encoder_cc(cc, val);
+                    }
+                } else {
+                    send_encoder_cc(cc, val);
+                }
             }
             return false;
         case ENC2_CW:
@@ -327,7 +352,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             } else {
                 uint8_t current_layer = get_highest_layer(layer_state);
                 uint8_t cc = 17 + (current_layer * 32);
-                send_encoder_cc(cc, 1);
+                uint8_t val = (current_layer == 0) ? 1 : 65;
+                if (current_layer != 0) {
+                    for (uint8_t i = 0; i < 3; i++) {
+                        send_encoder_cc(cc, val);
+                    }
+                } else {
+                    send_encoder_cc(cc, val);
+                }
             }
             return false;
 
@@ -336,14 +368,28 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             {
                 uint8_t current_layer = get_highest_layer(layer_state);
                 uint8_t cc = 18 + (current_layer * 32);
-                send_encoder_cc(cc, 65);
+                uint8_t val = (current_layer == 0) ? 65 : 1;
+                if (current_layer != 0) {
+                    for (uint8_t i = 0; i < 3; i++) {
+                        send_encoder_cc(cc, val);
+                    }
+                } else {
+                    send_encoder_cc(cc, val);
+                }
             }
             return false;
         case ENC3_CW:
             {
                 uint8_t current_layer = get_highest_layer(layer_state);
                 uint8_t cc = 18 + (current_layer * 32);
-                send_encoder_cc(cc, 1);
+                uint8_t val = (current_layer == 0) ? 1 : 65;
+                if (current_layer != 0) {
+                    for (uint8_t i = 0; i < 3; i++) {
+                        send_encoder_cc(cc, val);
+                    }
+                } else {
+                    send_encoder_cc(cc, val);
+                }
             }
             return false;
 
@@ -355,6 +401,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 uint8_t cc = 19 + (current_layer * 32);
                 send_encoder_cc(cc, enc1_btn_state ? 127 : 0);
             }
+            enc1_btn_pressed = record->event.pressed;
             return false;
         case ENC2_BTN:
             {
@@ -366,6 +413,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     send_encoder_cc(cc, 0);
                 }
             }
+            enc2_btn_pressed = record->event.pressed;
             return false;
         case ENC3_BTN:
             if (record->event.pressed) {
@@ -374,6 +422,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 uint8_t cc = 21 + (current_layer * 32);
                 send_encoder_cc(cc, enc3_btn_state ? 127 : 0);
             }
+            enc3_btn_pressed = record->event.pressed;
             return false;
 
         // Grid keys: simple sequential CC (0-15) with layer offset
