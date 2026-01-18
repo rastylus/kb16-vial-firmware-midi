@@ -265,7 +265,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
 
     switch (keycode) {
-        // Encoder 1 (top left) CC16: CW +1, CCW -1 (symmetric)
+        // Encoder 1 (top left) - layer-aware CC
         // OR layer navigation 0-5 if LAY_MOD is held
         case ENC1_CCW: 
             if (lay_mod_pressed) {
@@ -276,7 +276,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     layer_move(5);  // Jump to layer 5 if outside range
                 }
             } else {
-                send_encoder_cc(16, 127);
+                uint8_t current_layer = get_highest_layer(layer_state);
+                uint8_t cc = 16 + (current_layer * 32);  // CC offset per layer
+                send_encoder_cc(cc, 127);
             }
             return false;
         case ENC1_CW:  
@@ -288,11 +290,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     layer_move(0);  // Jump to layer 0 if outside range
                 }
             } else {
-                send_encoder_cc(16, 1);
+                uint8_t current_layer = get_highest_layer(layer_state);
+                uint8_t cc = 16 + (current_layer * 32);
+                send_encoder_cc(cc, 1);
             }
             return false;
         
-        // Encoder 2 (top right) CC17: CW +1, CCW -1 (symmetric)
+        // Encoder 2 (top right) - layer-aware CC
         // OR layer navigation 6-11 if LAY_MOD is held
         case ENC2_CCW: 
             if (lay_mod_pressed) {
@@ -303,7 +307,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     layer_move(11);  // Jump to layer 11 if outside range
                 }
             } else {
-                send_encoder_cc(17, 127);
+                uint8_t current_layer = get_highest_layer(layer_state);
+                uint8_t cc = 17 + (current_layer * 32);
+                send_encoder_cc(cc, 127);
             }
             return false;
         case ENC2_CW:  
@@ -315,40 +321,64 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     layer_move(6);  // Jump to layer 6 if outside range
                 }
             } else {
-                send_encoder_cc(17, 1);
+                uint8_t current_layer = get_highest_layer(layer_state);
+                uint8_t cc = 17 + (current_layer * 32);
+                send_encoder_cc(cc, 1);
             }
             return false;
         
-        // Encoder 3 (large center) CC18: CW +1, CCW gentle step (65) to avoid snapping
-        case ENC3_CCW: send_encoder_cc(18, 65);  return false;
-        case ENC3_CW:  send_encoder_cc(18, 1);   return false;
+        // Encoder 3 (large center) - layer-aware CC
+        case ENC3_CCW: 
+            {
+                uint8_t current_layer = get_highest_layer(layer_state);
+                uint8_t cc = 18 + (current_layer * 32);
+                send_encoder_cc(cc, 65);
+            }
+            return false;
+        case ENC3_CW:  
+            {
+                uint8_t current_layer = get_highest_layer(layer_state);
+                uint8_t cc = 18 + (current_layer * 32);
+                send_encoder_cc(cc, 1);
+            }
+            return false;
         
-        // Encoder button presses: toggle state on press only
+        // Encoder button presses: toggle state on press only (layer-aware CC)
         case ENC1_BTN:
             if (record->event.pressed) {
                 enc1_btn_state = !enc1_btn_state;
-                send_encoder_cc(19, enc1_btn_state ? 127 : 0);
+                uint8_t current_layer = get_highest_layer(layer_state);
+                uint8_t cc = 19 + (current_layer * 32);
+                send_encoder_cc(cc, enc1_btn_state ? 127 : 0);
             }
             return false;
         case ENC2_BTN:
-            if (record->event.pressed) {
-                send_encoder_cc(20, 127);
-            } else {
-                send_encoder_cc(20, 0);
+            {
+                uint8_t current_layer = get_highest_layer(layer_state);
+                uint8_t cc = 20 + (current_layer * 32);
+                if (record->event.pressed) {
+                    send_encoder_cc(cc, 127);
+                } else {
+                    send_encoder_cc(cc, 0);
+                }
             }
             return false;
         case ENC3_BTN:
             if (record->event.pressed) {
                 enc3_btn_state = !enc3_btn_state;
-                send_encoder_cc(21, enc3_btn_state ? 127 : 0);
+                uint8_t current_layer = get_highest_layer(layer_state);
+                uint8_t cc = 21 + (current_layer * 32);
+                send_encoder_cc(cc, enc3_btn_state ? 127 : 0);
             }
             return false;
         
-        // Grid keys CC 0-15 (skip 3): send 127 on press, 0 on release
+        // Grid keys: layer-aware CC (skip 3 on base, use offset)
         case GRD_CC0 ... GRD_CC15:
             {
                 uint8_t cc_offset[] = {0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
-                uint8_t cc = cc_offset[keycode - GRD_CC0];
+                uint8_t base_cc = cc_offset[keycode - GRD_CC0];
+                uint8_t current_layer = get_highest_layer(layer_state);
+                uint8_t cc = base_cc + (current_layer * 32);  // CC offset per layer
                 uint8_t val = record->event.pressed ? 127 : 0;
                 send_encoder_cc(cc, val);
             }
