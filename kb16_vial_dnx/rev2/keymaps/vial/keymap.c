@@ -29,7 +29,15 @@ enum layer_names {
     _BASE,
     _FN,
     _FN1,
-    _FN2
+    _FN2,
+    _FN3,
+    _FN4,
+    _FN5,
+    _FN6,
+    _FN7,
+    _FN8,
+    _FN9,
+    _FN10
 };
 
 // Encoder MIDI CC keycodes and Grid MIDI keycodes
@@ -43,12 +51,12 @@ enum custom_keycodes {
     ENC1_BTN,
     ENC2_BTN,
     ENC3_BTN,
+    LAY_MOD,  // Layer navigation modifier (grid button KC_4)
     // Grid keys (16 keys) - CC 0-15 (note: CC 0-31 are bank selectors, consider CC 32-47 or higher)
     GRD_CC0,
     GRD_CC1,
     GRD_CC2,
-    GRD_CC3,
-    GRD_CC4,
+    GRD_CC4,  // Skip GRD_CC3 (replaced with LAY_MOD)
     GRD_CC5,
     GRD_CC6,
     GRD_CC7,
@@ -67,6 +75,8 @@ static inline void send_encoder_cc(uint8_t cc, uint8_t val);
 // Encoder button toggle states
 static bool enc1_btn_state = false;
 static bool enc3_btn_state = false;
+// Layer navigation modifier state
+static bool lay_mod_pressed = false;
 #ifdef MIDI_ENABLE
 extern MidiDevice midi_device;
 static inline void send_encoder_cc(uint8_t cc, uint8_t val) {
@@ -103,8 +113,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 */
     /*  Row:    0         1        2        3         4      */
     [_BASE] = LAYOUT(
-                GRD_CC0,  GRD_CC1, GRD_CC2, GRD_CC3,  ENC1_BTN,
-                GRD_CC4,  GRD_CC5, GRD_CC6, GRD_CC7,  TO(_FN),
+                GRD_CC0,  GRD_CC1, GRD_CC2, LAY_MOD,  ENC1_BTN,
+                GRD_CC4,  GRD_CC5, GRD_CC6, GRD_CC7,  ENC2_BTN,
                 GRD_CC8,  GRD_CC9, GRD_CC10, GRD_CC11, ENC3_BTN,
                 GRD_CC12, GRD_CC13, GRD_CC14, GRD_CC15
             ),
@@ -122,8 +132,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 */
     /*  Row:    0        1        2        3        4       */
     [_FN] = LAYOUT(
-                _______, _______, _______, _______, _______,
-                _______, _______, _______, _______, TO(_FN1),
+                _______, _______, _______, LAY_MOD, _______,
+                _______, _______, _______, _______, ENC2_BTN,
                 _______, _______, _______, _______, _______,
                 _______, _______, _______, _______
             ),
@@ -141,8 +151,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 */
     /*  Row:    0        1        2        3        4       */
     [_FN1] = LAYOUT(
-                _______, _______, _______, _______, _______,
-                _______, _______, _______, _______, TO(_FN2),
+                _______, _______, _______, LAY_MOD, _______,
+                _______, _______, _______, _______, ENC2_BTN,
                 _______, _______, _______, _______, _______,
                 _______, _______, _______, _______
             ),
@@ -160,15 +170,76 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 */
     /*  Row:    0        1        2        3        4        */
     [_FN2] = LAYOUT(
-                RGB_SPI, RGB_SPD, _______, QK_BOOT, _______,
-                RGB_SAI, RGB_SAD, _______, _______, TO(_BASE),
+                RGB_SPI, RGB_SPD, _______, LAY_MOD, _______,
+                RGB_SAI, RGB_SAD, _______, _______, ENC2_BTN,
                 RGB_TOG, RGB_MOD, RGB_HUI, _______, _______,
                 _______, RGB_VAI, RGB_HUD, RGB_VAD
+            ),
+
+    [_FN3] = LAYOUT(
+                _______, _______, _______, LAY_MOD, _______,
+                _______, _______, _______, _______, ENC2_BTN,
+                _______, _______, _______, _______, _______,
+                _______, _______, _______, _______
+            ),
+
+    [_FN4] = LAYOUT(
+                _______, _______, _______, LAY_MOD, _______,
+                _______, _______, _______, _______, ENC2_BTN,
+                _______, _______, _______, _______, _______,
+                _______, _______, _______, _______
+            ),
+
+    [_FN5] = LAYOUT(
+                _______, _______, _______, LAY_MOD, _______,
+                _______, _______, _______, _______, ENC2_BTN,
+                _______, _______, _______, _______, _______,
+                _______, _______, _______, _______
+            ),
+
+    [_FN6] = LAYOUT(
+                _______, _______, _______, LAY_MOD, _______,
+                _______, _______, _______, _______, ENC2_BTN,
+                _______, _______, _______, _______, _______,
+                _______, _______, _______, _______
+            ),
+
+    [_FN7] = LAYOUT(
+                _______, _______, _______, LAY_MOD, _______,
+                _______, _______, _______, _______, ENC2_BTN,
+                _______, _______, _______, _______, _______,
+                _______, _______, _______, _______
+            ),
+
+    [_FN8] = LAYOUT(
+                _______, _______, _______, LAY_MOD, _______,
+                _______, _______, _______, _______, ENC2_BTN,
+                _______, _______, _______, _______, _______,
+                _______, _______, _______, _______
+            ),
+
+    [_FN9] = LAYOUT(
+                _______, _______, _______, LAY_MOD, _______,
+                _______, _______, _______, _______, ENC2_BTN,
+                _______, _______, _______, _______, _______,
+                _______, _______, _______, _______
+            ),
+
+    [_FN10] = LAYOUT(
+                _______, _______, _______, LAY_MOD, _______,
+                _______, _______, _______, _______, ENC2_BTN,
+                _______, _______, _______, _______, _______,
+                _______, _______, _______, _______
             ),
 };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
+        // Layer nav modifier: track press/release
+        case LAY_MOD:
+            lay_mod_pressed = record->event.pressed;
+            return false;
+        
         // Encoder rotation: only on press
         case ENC1_CCW:
         case ENC1_CW:
@@ -195,11 +266,59 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     switch (keycode) {
         // Encoder 1 (top left) CC16: CW +1, CCW -1 (symmetric)
-        case ENC1_CCW: send_encoder_cc(16, 127); return false;
-        case ENC1_CW:  send_encoder_cc(16, 1);   return false;
+        // OR layer navigation 0-5 if LAY_MOD is held
+        case ENC1_CCW: 
+            if (lay_mod_pressed) {
+                uint8_t current_layer = get_highest_layer(layer_state);
+                if (current_layer <= 5) {
+                    layer_move(current_layer == 0 ? 5 : current_layer - 1);
+                } else {
+                    layer_move(5);  // Jump to layer 5 if outside range
+                }
+            } else {
+                send_encoder_cc(16, 127);
+            }
+            return false;
+        case ENC1_CW:  
+            if (lay_mod_pressed) {
+                uint8_t current_layer = get_highest_layer(layer_state);
+                if (current_layer <= 5) {
+                    layer_move((current_layer + 1) % 6);
+                } else {
+                    layer_move(0);  // Jump to layer 0 if outside range
+                }
+            } else {
+                send_encoder_cc(16, 1);
+            }
+            return false;
+        
         // Encoder 2 (top right) CC17: CW +1, CCW -1 (symmetric)
-        case ENC2_CCW: send_encoder_cc(17, 127); return false;
-        case ENC2_CW:  send_encoder_cc(17, 1);   return false;
+        // OR layer navigation 6-11 if LAY_MOD is held
+        case ENC2_CCW: 
+            if (lay_mod_pressed) {
+                uint8_t current_layer = get_highest_layer(layer_state);
+                if (current_layer >= 6 && current_layer <= 11) {
+                    layer_move(current_layer == 6 ? 11 : current_layer - 1);
+                } else {
+                    layer_move(11);  // Jump to layer 11 if outside range
+                }
+            } else {
+                send_encoder_cc(17, 127);
+            }
+            return false;
+        case ENC2_CW:  
+            if (lay_mod_pressed) {
+                uint8_t current_layer = get_highest_layer(layer_state);
+                if (current_layer >= 6 && current_layer <= 11) {
+                    layer_move(6 + ((current_layer - 6 + 1) % 6));
+                } else {
+                    layer_move(6);  // Jump to layer 6 if outside range
+                }
+            } else {
+                send_encoder_cc(17, 1);
+            }
+            return false;
+        
         // Encoder 3 (large center) CC18: CW +1, CCW gentle step (65) to avoid snapping
         case ENC3_CCW: send_encoder_cc(18, 65);  return false;
         case ENC3_CW:  send_encoder_cc(18, 1);   return false;
@@ -211,6 +330,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 send_encoder_cc(19, enc1_btn_state ? 127 : 0);
             }
             return false;
+        case ENC2_BTN:
+            if (record->event.pressed) {
+                send_encoder_cc(20, 127);
+            } else {
+                send_encoder_cc(20, 0);
+            }
+            return false;
         case ENC3_BTN:
             if (record->event.pressed) {
                 enc3_btn_state = !enc3_btn_state;
@@ -218,10 +344,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             return false;
         
-        // Grid keys CC 0-15: send 127 on press, 0 on release
+        // Grid keys CC 0-15 (skip 3): send 127 on press, 0 on release
         case GRD_CC0 ... GRD_CC15:
             {
-                uint8_t cc = (keycode - GRD_CC0);  // CC 0-15
+                uint8_t cc_offset[] = {0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+                uint8_t cc = cc_offset[keycode - GRD_CC0];
                 uint8_t val = record->event.pressed ? 127 : 0;
                 send_encoder_cc(cc, val);
             }
@@ -245,5 +372,13 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][2] = {
     [_FN]   = { ENCODER_CCW_CW(ENC1_CCW, ENC1_CW), ENCODER_CCW_CW(ENC2_CCW, ENC2_CW), ENCODER_CCW_CW(ENC3_CCW, ENC3_CW) },
     [_FN1]  = { ENCODER_CCW_CW(ENC1_CCW, ENC1_CW), ENCODER_CCW_CW(ENC2_CCW, ENC2_CW), ENCODER_CCW_CW(ENC3_CCW, ENC3_CW) },
     [_FN2]  = { ENCODER_CCW_CW(ENC1_CCW, ENC1_CW), ENCODER_CCW_CW(ENC2_CCW, ENC2_CW), ENCODER_CCW_CW(ENC3_CCW, ENC3_CW) },
+    [_FN3]  = { ENCODER_CCW_CW(ENC1_CCW, ENC1_CW), ENCODER_CCW_CW(ENC2_CCW, ENC2_CW), ENCODER_CCW_CW(ENC3_CCW, ENC3_CW) },
+    [_FN4]  = { ENCODER_CCW_CW(ENC1_CCW, ENC1_CW), ENCODER_CCW_CW(ENC2_CCW, ENC2_CW), ENCODER_CCW_CW(ENC3_CCW, ENC3_CW) },
+    [_FN5]  = { ENCODER_CCW_CW(ENC1_CCW, ENC1_CW), ENCODER_CCW_CW(ENC2_CCW, ENC2_CW), ENCODER_CCW_CW(ENC3_CCW, ENC3_CW) },
+    [_FN6]  = { ENCODER_CCW_CW(ENC1_CCW, ENC1_CW), ENCODER_CCW_CW(ENC2_CCW, ENC2_CW), ENCODER_CCW_CW(ENC3_CCW, ENC3_CW) },
+    [_FN7]  = { ENCODER_CCW_CW(ENC1_CCW, ENC1_CW), ENCODER_CCW_CW(ENC2_CCW, ENC2_CW), ENCODER_CCW_CW(ENC3_CCW, ENC3_CW) },
+    [_FN8]  = { ENCODER_CCW_CW(ENC1_CCW, ENC1_CW), ENCODER_CCW_CW(ENC2_CCW, ENC2_CW), ENCODER_CCW_CW(ENC3_CCW, ENC3_CW) },
+    [_FN9]  = { ENCODER_CCW_CW(ENC1_CCW, ENC1_CW), ENCODER_CCW_CW(ENC2_CCW, ENC2_CW), ENCODER_CCW_CW(ENC3_CCW, ENC3_CW) },
+    [_FN10] = { ENCODER_CCW_CW(ENC1_CCW, ENC1_CW), ENCODER_CCW_CW(ENC2_CCW, ENC2_CW), ENCODER_CCW_CW(ENC3_CCW, ENC3_CW) },
 };
 #endif
