@@ -32,7 +32,7 @@ enum layer_names {
     _FN2
 };
 
-// Encoder MIDI CC keycodes
+// Encoder MIDI CC keycodes and Grid MIDI keycodes
 enum custom_keycodes {
     ENC1_CCW = SAFE_RANGE,
     ENC1_CW,
@@ -43,6 +43,23 @@ enum custom_keycodes {
     ENC1_BTN,
     ENC2_BTN,
     ENC3_BTN,
+    // Grid keys (16 keys) - CC 0-15 (note: CC 0-31 are bank selectors, consider CC 32-47 or higher)
+    GRD_CC0,
+    GRD_CC1,
+    GRD_CC2,
+    GRD_CC3,
+    GRD_CC4,
+    GRD_CC5,
+    GRD_CC6,
+    GRD_CC7,
+    GRD_CC8,
+    GRD_CC9,
+    GRD_CC10,
+    GRD_CC11,
+    GRD_CC12,
+    GRD_CC13,
+    GRD_CC14,
+    GRD_CC15,
 };
 
 // Send MIDI CC helper: channel 0, send single value
@@ -86,10 +103,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 */
     /*  Row:    0         1        2        3         4      */
     [_BASE] = LAYOUT(
-                KC_1,     KC_2,    KC_3,    KC_4,     ENC1_BTN,
-                KC_5,     KC_6,    KC_7,    KC_8,     TO(_FN),
-                KC_9,     KC_0,    KC_UP,   KC_ENT,   ENC3_BTN,
-                MO(_FN2), KC_LEFT, KC_DOWN, KC_RIGHT
+                GRD_CC0,  GRD_CC1, GRD_CC2, GRD_CC3,  ENC1_BTN,
+                GRD_CC4,  GRD_CC5, GRD_CC6, GRD_CC7,  TO(_FN),
+                GRD_CC8,  GRD_CC9, GRD_CC10, GRD_CC11, ENC3_BTN,
+                GRD_CC12, GRD_CC13, GRD_CC14, GRD_CC15
             ),
 
 /*
@@ -168,6 +185,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case ENC3_BTN:
             break;
         
+        // Grid keys: handle both press and release
+        case GRD_CC0 ... GRD_CC15:
+            break;
+        
         default:
             return true;
     }
@@ -194,6 +215,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (record->event.pressed) {
                 enc3_btn_state = !enc3_btn_state;
                 send_encoder_cc(21, enc3_btn_state ? 127 : 0);
+            }
+            return false;
+        
+        // Grid keys CC 0-15: send 127 on press, 0 on release
+        case GRD_CC0 ... GRD_CC15:
+            {
+                uint8_t cc = (keycode - GRD_CC0);  // CC 0-15
+                uint8_t val = record->event.pressed ? 127 : 0;
+                send_encoder_cc(cc, val);
             }
             return false;
     }
